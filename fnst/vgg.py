@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.utils.model_zoo as model_zoo
 
 
 class VGG16(nn.Module):
@@ -43,7 +44,7 @@ class VGG16(nn.Module):
 
             # 3 Conv2D 3x3 (stride 1), SAME, out 512, relu
             # 1 Maxpool 2x2 (stride 2)
-            nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
             nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1),
             nn.ReLU(inplace=True),
@@ -52,7 +53,7 @@ class VGG16(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
 
-        self.classifer = nn.Sequential(
+        self.classifier = nn.Sequential(
             # 2 FC 4096, relu, dropout 0.5
             # 1 FC 1000 (aka num_classes of ImageNet)
             nn.Linear(512 * 7 * 7, 4096),
@@ -64,9 +65,18 @@ class VGG16(nn.Module):
             nn.Linear(4096, num_classes)
         )
 
-        def forward(self, x):
-            x = self.features(x)
-            # Flatten
-            x = x.view(x.size(0), -1)
-            x = self.classifer(x)
-            return x
+    def forward(self, x):
+        x = self.features(x)
+        # Flatten
+        x = x.view(x.size(0), -1)
+        out = self.classifier(x)
+        return out
+
+
+def vgg16():
+    """Load VGG model with pretrained Imagenet weights
+    """
+    model = VGG16()
+    model.load_state_dict(
+        model_zoo.load_url('https://download.pytorch.org/models/vgg16-397923af.pth'))
+    return model
