@@ -36,7 +36,6 @@ class VGGTest(unittest.TestCase):
 
         # Forward
         out = model(x)
-        print(out)
         # Softmax
         out = F.softmax(out, dim=1)
 
