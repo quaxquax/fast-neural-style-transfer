@@ -1,4 +1,4 @@
-"""Test pre-trained VGG16 model by classifying some test images
+"""Test pre-trained ResNet50 model by classifying some test images
 """
 
 import unittest
@@ -7,7 +7,7 @@ import sys
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..')))
 
-from fnst.vgg import vgg16
+from fnst.resnet import resnet50
 
 from torch.autograd import Variable
 import torchvision.transforms as transforms
@@ -16,16 +16,20 @@ import torch
 from PIL import Image
 
 
-class VGGTest(unittest.TestCase):
+class ResNetTest(unittest.TestCase):
     def test_classify(self):
         # Load model
-        model = vgg16()
+        model = resnet50()
+        # ResNet use batch normalization, so need to switch to eval mode in testing
+        model.eval()
 
         # Load image data
         im_size = 224
         transform = transforms.Compose([
             transforms.Resize((im_size, im_size)),
-            transforms.ToTensor() # / 255.
+            transforms.ToTensor(), # / 255.
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
         ])
 
         img = Image.open('assets/goldfish.jpg')
@@ -36,11 +40,9 @@ class VGGTest(unittest.TestCase):
 
         # Forward
         out = model(x)
-        # Softmax
-        out = F.softmax(out, dim=1)
 
         # Get index of the max
-        _, idx = torch.max(out.data, 1)
+        idx = torch.argmax(out.data, 1)
 
         # Make sure it is a goldfish
         self.assertEqual(idx[0], 1)
