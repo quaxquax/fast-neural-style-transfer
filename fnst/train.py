@@ -1,11 +1,18 @@
 import argparse
 
+import torch
+from torch import optim
+from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision import transforms
 
+from transformer_net import TransformerNet
+
 
 def main(args):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     # DATA
     # Transform and Dataloader for COCO dataset
     transform = transforms.Compose([
@@ -19,6 +26,9 @@ def main(args):
 
     # MODEL
     # Define Image Transformation Network with MSE loss and Adam optimizer
+    transformer = TransformerNet().to(device)
+    mse_loss = nn.MSELoss()
+    optimize = optim.Adam(transformer.parameters(), args.learning_rate)
 
     # Precompute style features
     # 1. Extract features with VGG
@@ -41,5 +51,6 @@ if __name__ == '__main__':
     parser.add_argument('--image-size', type=int, default=256,
                         help='Size of training images')
     parser.add_argument('--batch-size', type=int, default=4)
+    parser.add_argument('--learning-rate', type=float, default=1e-3)
     args = parser.parse_args()
     main(args)
