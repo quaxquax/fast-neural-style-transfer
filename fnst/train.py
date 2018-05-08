@@ -1,5 +1,6 @@
 import argparse
 
+from PIL import Image
 import torch
 from torch import optim
 from torch import nn
@@ -8,6 +9,25 @@ from torchvision import datasets
 from torchvision import transforms
 
 from transformer_net import TransformerNet
+from vgg import VGG16
+
+
+def normalize_batch(batch):
+    """Normalize batch using ImageNet mean and std
+    """
+    mean = batch.new_tensor([0.485, 0.456, 0.406]).view(-1, 1, 1)
+    std = batch.new_tensor([0.229, 0.224, 0.225]).view(-1, 1, 1)
+    batch = batch.div_(255.0)
+
+    return (batch - mean) / std
+
+
+def gram_matrix(y):
+    (batch, channel, height, width) = y.size()
+    features = y.view(batch, channel, height * width)
+    features_t = features.transpose(1, 2)
+    gram = features.bmm(features_t) / (channel * height * width)
+    return gram
 
 
 def main(args):
@@ -30,16 +50,31 @@ def main(args):
     mse_loss = nn.MSELoss()
     optimize = optim.Adam(transformer.parameters(), args.learning_rate)
 
-    # Precompute style features
-    # 1. Extract features with VGG
-    # 2. Loop through style layers to calculate the Gram Matrix
+    # Pretrained VGG
+    vgg = VGG16(requires_grad=False).to(device)
+
+    # FEATURES
+    style_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Lambda(lambda x: x.mul(255))
+    ])
+
+    # Load the style image
+    style = Image.open(args.style)
+    style = style_transform(style)
+    style = style.repeat(args.batch_size, 1, 1, 1).to(device)
+
+    # Compute the style features
+    features_style = vgg(normalize_batch(style))
+
+    # Loop through VGG style layers to calculate Gram Matrix
+    gram_style = [gram_matrix(y) for y in features_style]
 
     # TRAIN
     # For each epoch:
     # 1. Parse through Image Transformation Net. Then calculate content loss
     # 2. Calculate style loss
     # 3. Log these losses and regularly save model
-    pass
 
 
 if __name__ == '__main__':
