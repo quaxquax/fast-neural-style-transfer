@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from PIL import Image
 from tqdm import tqdm
@@ -33,7 +34,6 @@ def gram_matrix(y):
 
 def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print('Using {} for training.'.format(device))
 
     # DATA
     # Transform and Dataloader for COCO dataset
@@ -110,6 +110,7 @@ def main(args):
             agg_content_loss += content_loss.item()
             agg_style_loss += style_loss.item()
 
+            # Monitor
             if (batch_id + 1) % args.log_interval == 0:
                 tqdm.write('[{}] ({})\t'
                            'content: {:.6f}\t'
@@ -118,6 +119,19 @@ def main(args):
                                                   agg_content_loss / (batch_id + 1),
                                                   agg_style_loss / (batch_id + 1),
                                                   (agg_content_loss + agg_style_loss) / (batch_id + 1)))
+
+            # Checkpoint
+            if (batch_id + 1) % args.save_interval == 0:
+                # eval mode
+                transformer.eval().cpu()
+                checkpoint_file = os.path.join(args.checkpoint_dir,
+                                               'fnst_{}_{}.pth'.format(epoch+1, batch_id+1))
+
+                tqdm.write('Checkpoint {}'.format(checkpoint_file))
+                torch.save(transformer.state_dict(), checkpoint_file)
+
+                # back to train mode
+                transformer.to(device).train()
 
 
 if __name__ == '__main__':
@@ -135,10 +149,16 @@ if __name__ == '__main__':
                         help='Weight fo style loss')
 
     parser.add_argument('--epochs', type=int, default=2)
-    parser.add_argument('--log-interval', type=int, default=500)
     parser.add_argument('--batch-size', type=int, default=4)
     parser.add_argument('--learning-rate', type=float, default=1e-3)
+    parser.add_argument('--log-interval', type=int, default=500)
+    parser.add_argument('--save-interval', type=int, default=2000)
+
+    parser.add_argument('--checkpoint-dir', type=str, default='checkpoints')
 
     args = parser.parse_args()
     print(args)
+
+    if not os.path.exists(args.checkpoint_dir):
+        os.mkdir(args.checkpoint_dir)
     main(args)
