@@ -78,7 +78,7 @@ def main(args):
         agg_content_loss = 0.
         agg_style_loss = 0.
 
-        for batch_id, (x, _) in tqdm(enumerate(train_loader)):
+        for batch_id, (x, _) in tqdm(enumerate(train_loader), unit='batch'):
             x = x.to(device)
             n_batch = len(x)
 
