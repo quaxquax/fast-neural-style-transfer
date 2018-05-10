@@ -124,6 +124,7 @@ def main(args):
             if (batch_id + 1) % args.save_interval == 0:
                 # eval mode
                 transformer.eval().cpu()
+                # TODO: Change fnst -> name of style image
                 checkpoint_file = os.path.join(args.checkpoint_dir,
                                                'fnst_{}_{}.pth'.format(epoch+1, batch_id+1))
 
