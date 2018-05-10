@@ -7,6 +7,14 @@ from torchvision import transforms
 from transformer_net import TransformerNet
 
 
+def save_image(out, filename):
+    img = out.clone().clamp(0, 255).numpy()
+    # transpose (C, H, W) -> (H, W, C)
+    img = img.transpose(1, 2, 0).astype('uint8')
+    img = Image.fromarray(img)
+    img.save(filename)
+
+
 def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -30,13 +38,9 @@ def main(args):
         out = style_model(content).cpu()
 
     # Save result image
-    out = out.clamp(0, 255).numpy()
-    # transpose (C, H, W) -> (H, W, C)
-    out = out.tranpose(1, 2, 0).astype('uint8')
-    out = Image.fromarray(out)
-    out.save(args.out)
+    save_image(out[0], args.out)
 
-
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--content', type=str, required=True,
