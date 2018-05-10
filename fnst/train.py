@@ -33,12 +33,13 @@ def gram_matrix(y):
 
 def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print('Using {} for training.'.format(device))
 
     # DATA
     # Transform and Dataloader for COCO dataset
     transform = transforms.Compose([
         transforms.Resize(args.image_size),
-        # transforms.CenterCrop(args.image_size),
+        transforms.CenterCrop(args.image_size),
         transforms.ToTensor(), # / 255.
         transforms.Lambda(lambda x: x.mul(255))
     ])
@@ -78,11 +79,13 @@ def main(args):
         agg_style_loss = 0.
 
         for batch_id, (x, _) in tqdm(enumerate(train_loader)):
+            x = x.to(device)
             n_batch = len(x)
+
             optimizer.zero_grad()
 
             # Parse throught Image Transformation network
-            y = transformer(x.to(device))
+            y = transformer(x)
             y = normalize_batch(y)
             x = normalize_batch(x)
 
@@ -111,7 +114,7 @@ def main(args):
                 tqdm.write('[{}] ({})\t'
                            'content: {:.6f}\t'
                            'style: {:.6f}\t'
-                           'total: {:.6f}'.format(epoch, batch_id,
+                           'total: {:.6f}'.format(epoch+1, batch_id+1,
                                                   agg_content_loss / (batch_id + 1),
                                                   agg_style_loss / (batch_id + 1),
                                                   (agg_content_loss + agg_style_loss) / (batch_id + 1)))
