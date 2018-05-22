@@ -6,6 +6,10 @@ Pytorch implementation of fast neural style transfer, combination of 3 papers:
 [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155),
 [Instance Normalization: The Missing Ingredient for Fast Stylization](https://arxiv.org/abs/1607.08022)
 
+![wave](./assets/styles/the_great_wave_off_kanagawa.jpg)
+![jessica-origin](./assets/tests/jessica.jpg)
+![jessica-style](./assets/tests/jessica_wave.jpg)
+
 
 ## Usage
 
@@ -13,7 +17,7 @@ Pytorch implementation of fast neural style transfer, combination of 3 papers:
 
 *Skip if you want to have just a quick demo with some pretrained styles*
 
-+ Download COCO 2014 ([link](http://cocodataset.org/#download)),
++ Download COCO 2014 dataset ([link](http://cocodataset.org/#download)),
 assume you put in `~/Data/COCO/train2014`
 
 + Prepare a style image, e.g. `assets/styles/bxphai.jpg`
