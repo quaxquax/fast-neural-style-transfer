@@ -124,9 +124,9 @@ def main(args):
             if (batch_id + 1) % args.save_interval == 0:
                 # eval mode
                 transformer.eval().cpu()
-                # TODO: Change fnst -> name of style image
+                style_name = args.style.split('/')[-1].split('.')[0]
                 checkpoint_file = os.path.join(args.checkpoint_dir,
-                                               'fnst_{}_{}.pth'.format(epoch+1, batch_id+1))
+                                               '{}.pth'.format(style_name))
 
                 tqdm.write('Checkpoint {}'.format(checkpoint_file))
                 torch.save(transformer.state_dict(), checkpoint_file)
