@@ -1,6 +1,6 @@
 # Fast Neural Style transfer
 
-Pytorch implmentation of fast neural style transfer, combination of 3 papers:
+Pytorch implementation of fast neural style transfer, combination of 3 papers:
 
 [A Neural Algorithm of Artistic Style](https://arxiv.org/abs/1508.06576),
 [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155),
@@ -36,6 +36,8 @@ python fnst/train.py --help
 + You can use some pretrained styles:
 
     + The Great Wave off Kanagawa (`checkpoints/wave.pth`)
+
+    ![wave](./assets/styles/the_great_wave_off_kanagawa.jpg)
 
 + Stylize a content image with a specific style, e.g. style `avatar.jpg` with `bxphai` style:
 
