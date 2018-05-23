@@ -58,7 +58,11 @@ python fnst/train.py --help
 
     ![dnson](./assets/styles/dnson.jpg)
 
-    +
+    + Bamboo Vendors 24x30 Vietnamese Commission Original Oil Painting - by [Pham Lan](https://fineartamerica.com/featured/bamboo-vendors-24x30-vietnamese-commission-original-oil-painting-pham-lam.html)
+
+    ![plam](./assets/styles/plam.jpg)
+
+    (*Expect more in future release*)
 
 + Stylize a content image with a specific style, e.g. style `avatar.jpg` with `dnson` style:
 
