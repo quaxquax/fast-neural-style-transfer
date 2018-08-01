@@ -15,7 +15,7 @@ Pytorch implementation of fast neural style transfer, combination of 3 papers:
 
 ![ndson](./assets/styles/dnson.jpg)
 
-*In the spring* - by [Duong Ngoc Son](http://www.vietnamartist.com/duong-ngoc-son/)
+*Street corner in Spring* - by [Duong Ngoc Son](http://www.vietnamartist.com/duong-ngoc-son/)
 
 ![lake-origin](./assets/tests/lake.jpg)
 ![lake-style](./assets/tests/lake_dnson.jpg)
@@ -54,7 +54,7 @@ python fnst/train.py --help
     ![wave](./assets/styles/wave.jpg)
 
 
-    + In the spring - by [Duong Ngoc Son](http://www.vietnamartist.com/duong-ngoc-son/) (`checkpoints/dnson.pth`)
+    + Street corner in Spring - by [Duong Ngoc Son](http://www.vietnamartist.com/duong-ngoc-son/) (`checkpoints/dnson.pth`)
 
     ![dnson](./assets/styles/dnson.jpg)
 
